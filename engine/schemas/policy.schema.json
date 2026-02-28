@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://promptowl.ai/schemas/policy.schema.json",
+  "title": "Policy",
+  "description": "Declarative rule for content transformation, permissions, or approvals",
+  "type": "object",
+  "required": ["id", "when", "then"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^policy:[a-zA-Z0-9._-]+$",
+      "description": "Unique identifier for the policy"
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Human-readable label"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Purpose and behavior of this policy"
+    },
+    "owner": {
+      "type": "string",
+      "pattern": "^(user|team|role):[a-zA-Z0-9_-]+$",
+      "description": "Principal who owns this policy"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 100,
+      "description": "Evaluation priority (higher = evaluated first)"
+    },
+    "when": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Array of condition expressions (AND logic). Examples: 'audience == \"external\"', 'scope in [\"team\", \"org\"]'"
+    },
+    "then": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["transform", "deny", "require_approval", "log", "warn", "enforce_max_tokens"],
+            "description": "Action to take when conditions match"
+          },
+          "transform": {
+            "type": "string",
+            "description": "Transform name (required if action=transform). Examples: 'redact_pii', 'summarize:1200'"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Parameters for the action/transform"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message for log/warn/deny actions"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["debug", "info", "warn", "error"],
+            "description": "Log level (for log action)"
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["resolve", "export", "store"],
+            "description": "Operation to deny (for deny action)"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Required approver roles (for require_approval action)"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 100,
+            "description": "Token limit (for enforce_max_tokens action)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Actions to take when conditions match"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this policy is active"
+    },
+    "applies_to": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["resolve", "export", "store"]
+          },
+          "description": "Which operations this policy applies to"
+        },
+        "node_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which node types this policy applies to"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["user", "team", "org", "public", "restricted", "confidential"]
+          },
+          "description": "Which scopes this policy applies to"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^#[a-zA-Z0-9_-]+$"
+          },
+          "description": "Which tags this policy applies to"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Filtering for when this policy should be evaluated"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "test_fixtures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths to test fixtures for policy dry-run"
+    }
+  },
+  "additionalProperties": false
+}

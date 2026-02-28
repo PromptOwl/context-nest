@@ -1,0 +1,53 @@
+# Actor Principals Configuration
+# Maps actors to their principals for permission checks
+# Format: actor_id → list of principals
+
+# Users
+user:misha:
+  - user:misha
+  - team:sre
+  - team:engineering
+  - role:admin
+
+user:alice:
+  - user:alice
+  - team:engineering
+  - role:developer
+
+user:bob:
+  - user:bob
+  - team:engineering
+  - role:developer
+
+user:compliance_officer:
+  - user:compliance_officer
+  - team:legal
+  - role:compliance
+  - role:admin
+
+user:cfo:
+  - user:cfo
+  - team:finance
+  - role:exec
+  - role:admin
+
+# Agents
+agent:web_chat_42:
+  - agent:web_chat_42
+  - team:support  # Agents inherit team permissions
+
+agent:trusted_bot:
+  - agent:trusted_bot
+
+agent:research_assistant:
+  - agent:research_assistant
+  - team:research
+
+# System actors
+system:indexer:
+  - system:indexer
+  - role:admin  # System processes have elevated access
+
+system:backup:
+  - system:backup
+  - role:admin

@@ -1,0 +1,32 @@
+# Syntax Configuration
+# Defines tokens for selector queries
+# Can be customized for Obsidian, Owlpad, or custom wiki syntax
+
+tokens:
+  # Title transclusion: [[Title]] or ((Title))
+  title_transclusion: "[[{{title}}]]"
+
+  # Tag prefix: #tag or @tag
+  tag: "#{{tag}}"
+
+  # Owner scoping: @owner/title or ~owner/title
+  owner_scope: "@{{owner}}/{{title}}"
+
+  # Pack reference: pack:id
+  pack_reference: "pack:{{pack_id}}"
+
+# Alternative configurations (commented out examples)
+
+# Owlpad style:
+# tokens:
+#   title_transclusion: "(({{title}}))"
+#   tag: "@{{tag}}"
+#   owner_scope: "~{{owner}}/{{title}}"
+#   pack_reference: "bundle:{{pack_id}}"
+
+# Custom wiki style:
+# tokens:
+#   title_transclusion: "{{{{title}}}}"
+#   tag: "+{{tag}}"
+#   owner_scope: "{{owner}}:{{title}}"
+#   pack_reference: "${{pack_id}}"

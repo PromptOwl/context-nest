@@ -1,0 +1,101 @@
+{
+  "manifest_version": "0.3",
+  "name": "contextnest",
+  "display_name": "ContextNest",
+  "version": "0.4.0",
+  "description": "AI Context Control Plane — query and retrieve governed context from local vaults using selectors like #tag, type:document, and [[Title]].",
+  "author": {
+    "name": "PromptOwl",
+    "url": "https://promptowl.ai"
+  },
+  "tools": [
+    {
+      "name": "context_query",
+      "description": "Run a selector query against the context vault (#tag, type:X, [[Title]], +AND, |OR, -NOT)"
+    },
+    {
+      "name": "context_get",
+      "description": "Get full content of a specific context node by title or ID"
+    },
+    {
+      "name": "context_list",
+      "description": "Browse vault contents with optional type/tag/limit filters"
+    },
+    {
+      "name": "context_resolve",
+      "description": "Full context resolution pipeline with optional token budget"
+    },
+    {
+      "name": "context_overview",
+      "description": "Get a complete vault overview — all nodes, types, tags, and snippets. Use first to understand what's available."
+    },
+    {
+      "name": "context_search",
+      "description": "Full-text search across all node content, titles, tags, and metadata by keyword"
+    },
+    {
+      "name": "context_init",
+      "description": "Load the vault's CONTEXT.md — the vault's identity and starting instructions. Call this first."
+    },
+    {
+      "name": "context_create",
+      "description": "Create a new context node in the vault with title, content, type, tags, and scope"
+    },
+    {
+      "name": "context_update",
+      "description": "Update an existing node — replace or append content, add tags, change scope"
+    }
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "CONTEXT_MODE": "${user_config.mode}",
+        "CONTEXT_VAULT_PATH": "${user_config.vault_path}",
+        "CONTEXT_API_URL": "${user_config.api_url}",
+        "CONTEXT_PERMISSIONS": "${user_config.permissions}"
+      }
+    }
+  },
+  "user_config": {
+    "mode": {
+      "type": "string",
+      "title": "Mode",
+      "description": "Backend mode: 'local' reads vault files directly, 'api' connects to a ContextNest API server. Enter 'local' or 'api'.",
+      "required": true,
+      "default": "local"
+    },
+    "vault_path": {
+      "type": "directory",
+      "title": "Vault Path",
+      "description": "Path to your context vault directory (required for local mode)",
+      "required": false,
+      "multiple": false
+    },
+    "api_url": {
+      "type": "string",
+      "title": "API URL",
+      "description": "ContextNest API base URL, e.g. http://localhost:3001 (required for api mode)",
+      "required": false,
+      "default": ""
+    },
+    "permissions": {
+      "type": "string",
+      "title": "Permissions",
+      "description": "Access level: 'read-write' allows creating/updating nodes, 'read-only' disables write tools. Enter 'read-write' or 'read-only'.",
+      "required": true,
+      "default": "read-write"
+    }
+  },
+  "license": "Apache-2.0",
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=16.0.0"
+    }
+  }
+}

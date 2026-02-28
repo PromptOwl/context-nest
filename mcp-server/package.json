@@ -1,10 +1,10 @@
 {
-  "name": "@promptowl/mcp-server",
-  "version": "1.0.0",
-  "description": "Model Context Protocol server for PromptOwl - Create and manage AI agents from Claude Code",
+  "name": "@contextnest/mcp-server",
+  "version": "0.2.0",
+  "description": "ContextNest MCP Server — serve context from local vaults to Claude, Cursor, and other MCP clients",
   "type": "module",
   "bin": {
-    "promptowl-mcp": "./dist/index.js"
+    "contextnest-mcp": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -14,16 +14,17 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "promptowl",
+    "contextnest",
+    "context",
     "ai",
-    "agents",
-    "claude",
-    "llm"
+    "knowledge",
+    "claude"
   ],
   "author": "PromptOwl",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0"
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "gray-matter": "^4.0.3"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

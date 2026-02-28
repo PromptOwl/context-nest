@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.next/
+*.mcpb
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+.claude/
+nul
+contextnest-extension/server/
+contextnest-extension/node_modules/

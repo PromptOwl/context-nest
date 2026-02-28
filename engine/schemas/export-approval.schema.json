@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://promptowl.ai/schemas/export-approval.schema.json",
+  "title": "Export Approval",
+  "description": "Record of approval for context export operation",
+  "type": "object",
+  "required": ["approval_id", "export_request_id", "approver", "approved_at"],
+  "properties": {
+    "approval_id": {
+      "type": "string",
+      "pattern": "^ulid:[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Unique identifier for this approval"
+    },
+    "export_request_id": {
+      "type": "string",
+      "description": "ID of the export request being approved"
+    },
+    "approver": {
+      "type": "string",
+      "pattern": "^(user|agent):[a-zA-Z0-9_-]+$",
+      "description": "Principal who approved the export"
+    },
+    "approver_principals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "All principals of the approver (for role validation)"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of approval"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this approval expires (optional time-limited approval)"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Human-readable conditions attached to this approval"
+    },
+    "restrictions": {
+      "type": "object",
+      "properties": {
+        "max_shares": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of times this can be exported/shared"
+        },
+        "allowed_recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Email patterns or domains allowed to receive export"
+        },
+        "disallow_external": {
+          "type": "boolean",
+          "description": "Prevent export outside organization"
+        },
+        "must_include_watermark": {
+          "type": "boolean",
+          "description": "Require watermark on exported content"
+        },
+        "redact_sensitive": {
+          "type": "boolean",
+          "description": "Require sensitive data redaction"
+        }
+      },
+      "additionalProperties": true,
+      "description": "Technical restrictions on the export"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Free-form notes from approver"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "Cryptographic signature of approval data for non-repudiation"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "requester": {
+          "type": "string",
+          "description": "Original requester principal"
+        },
+        "request_reason": {
+          "type": "string",
+          "description": "Reason provided in original request"
+        },
+        "node_count": {
+          "type": "integer",
+          "description": "Number of restricted nodes in export"
+        },
+        "restricted_node_titles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Titles of restricted nodes (for approver context)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "revoked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this approval has been revoked"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this approval was revoked"
+    },
+    "revoked_by": {
+      "type": "string",
+      "description": "Principal who revoked the approval"
+    },
+    "revocation_reason": {
+      "type": "string",
+      "description": "Reason for revocation"
+    },
+    "usage_count": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Number of times this approval has been used for export"
+    },
+    "last_used_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this approval was used"
+    }
+  },
+  "additionalProperties": false
+}

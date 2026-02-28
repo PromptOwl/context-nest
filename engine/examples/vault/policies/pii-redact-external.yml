@@ -1,0 +1,32 @@
+id: policy:pii.redact_external
+label: "PII Redaction for External Audiences"
+owner: "team:compliance"
+priority: 100
+when:
+  - "audience == 'external'"
+  - "scope in ['team', 'org']"
+then:
+  - action: transform
+    transform: redact_pii
+    params:
+      preserve_structure: true
+  - action: log
+    level: info
+    message: "PII redacted for external export"
+enabled: true
+version: 1
+created_at: "2025-08-01T09:00:00Z"
+updated_at: "2025-10-28T21:20:00Z"
+applies_to:
+  operations:
+    - resolve
+    - export
+  node_types:
+    - document
+    - snippet
+  scopes:
+    - team
+    - org
+test_fixtures:
+  - "tests/fixtures/customer-report.md"
+  - "tests/fixtures/case-study.md"
