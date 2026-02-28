@@ -1,2 +1,2 @@
 # research-leadership
-Research internal. Only for leadership
+Research internal. Only for leadership. Contains research projects overall.
