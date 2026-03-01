@@ -1,5 +1,5 @@
 {
-  "name": "@contextnest/engine",
+  "name": "@promptowl/contextnest-engine",
   "version": "0.1.0",
   "description": "Core engine for Context Nest — selectors, versioning, storage, URI resolution, and integrity verification",
   "type": "module",

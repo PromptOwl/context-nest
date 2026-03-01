@@ -1,5 +1,5 @@
 {
-  "name": "@contextnest/mcp-server",
+  "name": "@promptowl/contextnest-mcp-server",
   "version": "0.1.0",
   "description": "MCP server for Context Nest vault access by AI agents",
   "type": "module",
@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@contextnest/engine": "workspace:*",
+    "@promptowl/contextnest-engine": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.24.0"
   },

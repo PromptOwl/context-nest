@@ -25,8 +25,8 @@ import {
   parseDocument,
   publishDocument,
   generateIndexMd,
-} from "@contextnest/engine";
-import type { ContextNode, Frontmatter } from "@contextnest/engine";
+} from "@promptowl/contextnest-engine";
+import type { ContextNode, Frontmatter } from "@promptowl/contextnest-engine";
 
 // Resolve vault path from env or args
 const vaultPath = process.env.CONTEXTNEST_VAULT_PATH || process.argv[2] || process.cwd();

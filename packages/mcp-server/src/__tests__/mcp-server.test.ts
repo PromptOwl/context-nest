@@ -15,8 +15,8 @@ import {
   generateContextYaml,
   generateIndexMd,
   DocumentNotFoundError,
-} from "@contextnest/engine";
-import type { ContextNode, Frontmatter, ContextYaml } from "@contextnest/engine";
+} from "@promptowl/contextnest-engine";
+import type { ContextNode, Frontmatter, ContextYaml } from "@promptowl/contextnest-engine";
 
 let vaultPath: string;
 let storage: NestStorage;

@@ -23,8 +23,8 @@ import {
   detectCycles,
   serializeDocument,
   parseUri,
-} from "@contextnest/engine";
-import type { ContextNode, Frontmatter, LayoutMode } from "@contextnest/engine";
+} from "@promptowl/contextnest-engine";
+import type { ContextNode, Frontmatter, LayoutMode } from "@promptowl/contextnest-engine";
 
 const program = new Command();
 
