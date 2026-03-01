@@ -2,17 +2,35 @@
 
 Structured, versioned context for AI agents. Context Nest organizes knowledge as markdown documents in a vault, with versioning, integrity verification, and a query language — accessible via CLI or MCP server.
 
+## Quick Start (npm)
+
+```bash
+# Install the CLI globally
+npm install -g contextnest-cli
+
+# Create a vault
+ctx init --name "My Project Context"
+```
+
+## Packages
+
+| Package | npm | License |
+|---|---|---|
+| [`@promptowl/contextnest-engine`](https://www.npmjs.com/package/@promptowl/contextnest-engine) | `npm i @promptowl/contextnest-engine` | AGPL-3.0 |
+| [`contextnest-cli`](https://www.npmjs.com/package/contextnest-cli) | `npm i -g contextnest-cli` | Apache-2.0 |
+| [`@promptowl/contextnest-mcp-server`](https://www.npmjs.com/package/@promptowl/contextnest-mcp-server) | `npm i @promptowl/contextnest-mcp-server` | AGPL-3.0 |
+
 ## Prerequisites
 
 - **Node.js** >= 20.0.0
-- **pnpm** >= 9.0.0
+- **pnpm** >= 9.0.0 (for development from source)
 
-## Installation
+## Installation from Source
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd context_nest_spec_demo
+git clone https://github.com/PromptOwl/context-nest.git
+cd context-nest
 
 # Install dependencies
 pnpm install
@@ -33,14 +51,14 @@ This makes the `ctx` command available system-wide.
 ## Project Structure
 
 ```
-context_nest_spec_demo/
+context-nest/
 ├── packages/
 │   ├── engine/        # Core library — parsing, storage, versioning, integrity
 │   ├── cli/           # Command-line tool (`ctx`)
 │   └── mcp-server/    # MCP server for AI agent access
 ├── fixtures/
 │   └── minimal-vault/ # Example vault for reference and testing
-└── CONTEXT_NEST_SPEC-v3.md  # Full specification
+└── CONTEXT_NEST_SPEC.md   # Specification (see github.com/PromptOwl/context-nest-spec)
 ```
 
 ---
@@ -408,6 +426,7 @@ ctx verify                        # 6. Verify integrity
 
 ## License
 
-- **Engine & MCP Server**: AGPL-3.0
-- **CLI**: Apache-2.0
-- **Specification**: CC-BY-4.0
+- **Engine** ([`@promptowl/contextnest-engine`](https://www.npmjs.com/package/@promptowl/contextnest-engine)): AGPL-3.0
+- **MCP Server** ([`@promptowl/contextnest-mcp-server`](https://www.npmjs.com/package/@promptowl/contextnest-mcp-server)): AGPL-3.0
+- **CLI** ([`contextnest-cli`](https://www.npmjs.com/package/contextnest-cli)): Apache-2.0
+- **Specification**: Apache-2.0 — see [context-nest-spec](https://github.com/PromptOwl/context-nest-spec)
