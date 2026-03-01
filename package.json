@@ -1,17 +1,20 @@
 {
-  "name": "@contextnest/core",
-  "version": "0.2.0",
+  "name": "context-nest",
   "private": true,
   "scripts": {
-    "test": "jest",
-    "test:engine": "cd engine && npx jest --no-coverage",
-    "build:mcp": "cd mcp-server && npm run build"
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "clean": "pnpm -r clean"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.0",
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "tsup": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
   }
 }

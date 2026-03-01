@@ -1,0 +1,29 @@
+{
+  "name": "contextnest-cli",
+  "version": "0.1.0",
+  "description": "Command-line tool for Context Nest vault operations",
+  "type": "module",
+  "bin": {
+    "ctx": "dist/index.js",
+    "contextnest": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@contextnest/engine": "workspace:*",
+    "commander": "^13.0.0",
+    "chalk": "^5.4.0",
+    "cli-table3": "^0.6.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "files": ["dist"],
+  "license": "Apache-2.0"
+}
