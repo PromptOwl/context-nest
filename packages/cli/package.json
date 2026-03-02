@@ -1,5 +1,5 @@
 {
-  "name": "contextnest-cli",
+  "name": "@promptowl/contextnest-cli",
   "version": "0.1.0",
   "description": "Command-line tool for Context Nest vault operations",
   "type": "module",

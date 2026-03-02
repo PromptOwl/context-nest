@@ -6,7 +6,7 @@ Structured, versioned context for AI agents. Context Nest organizes knowledge as
 
 ```bash
 # Install the CLI globally
-npm install -g contextnest-cli
+npm install -g @promptowl/contextnest-cli
 
 # Create a vault
 ctx init --name "My Project Context"
@@ -17,7 +17,7 @@ ctx init --name "My Project Context"
 | Package | npm | License |
 |---|---|---|
 | [`@promptowl/contextnest-engine`](https://www.npmjs.com/package/@promptowl/contextnest-engine) | `npm i @promptowl/contextnest-engine` | AGPL-3.0 |
-| [`contextnest-cli`](https://www.npmjs.com/package/contextnest-cli) | `npm i -g contextnest-cli` | Apache-2.0 |
+| [`@promptowl/contextnest-cli`](https://www.npmjs.com/package/@promptowl/contextnest-cli) | `npm i -g @promptowl/contextnest-cli` | Apache-2.0 |
 | [`@promptowl/contextnest-mcp-server`](https://www.npmjs.com/package/@promptowl/contextnest-mcp-server) | `npm i @promptowl/contextnest-mcp-server` | AGPL-3.0 |
 
 ## Prerequisites
@@ -428,5 +428,5 @@ ctx verify                        # 6. Verify integrity
 
 - **Engine** ([`@promptowl/contextnest-engine`](https://www.npmjs.com/package/@promptowl/contextnest-engine)): AGPL-3.0
 - **MCP Server** ([`@promptowl/contextnest-mcp-server`](https://www.npmjs.com/package/@promptowl/contextnest-mcp-server)): AGPL-3.0
-- **CLI** ([`contextnest-cli`](https://www.npmjs.com/package/contextnest-cli)): Apache-2.0
+- **CLI** ([`@promptowl/contextnest-cli`](https://www.npmjs.com/package/@promptowl/contextnest-cli)): Apache-2.0
 - **Specification**: Apache-2.0 — see [context-nest-spec](https://github.com/PromptOwl/context-nest-spec)
