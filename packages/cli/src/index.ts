@@ -2,6 +2,8 @@
  * contextnest-cli — Command-line tool for Context Nest vault operations.
  */
 
+import fs from "node:fs";
+import pathMod from "node:path";
 import { Command } from "commander";
 import chalk from "chalk";
 import {
@@ -328,8 +330,6 @@ program
     for (const [docId, history] of allHistories) {
       const report = verifyDocumentChain(docId, history, (version) => {
         // Synchronous read — for CLI simplicity
-        const fs = require("node:fs");
-        const pathMod = require("node:path");
         const docName = pathMod.basename(docId);
         const docDir = pathMod.dirname(docId);
         const keyframePath = pathMod.join(
