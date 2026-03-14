@@ -27,6 +27,7 @@ import {
   parseUri,
 } from "@promptowl/contextnest-engine";
 import type { ContextNode, Frontmatter, LayoutMode } from "@promptowl/contextnest-engine";
+import { getStarter, listStarters } from "./starters/index.js";
 
 const program = new Command();
 
@@ -77,10 +78,102 @@ program
   .description("Initialize a new Context Nest vault")
   .option("-l, --layout <mode>", "Layout mode: structured or obsidian", "structured")
   .option("-n, --name <name>", "Vault name", "My Context Nest")
+  .option("-s, --starter <recipe>", "Starter recipe: developer, executive, analyst, team")
+  .option("--list-starters", "List available starter recipes")
   .action(async (opts) => {
+    // List starters and exit
+    if (opts.listStarters) {
+      console.log(chalk.bold("\nAvailable starter recipes:\n"));
+      for (const s of listStarters()) {
+        console.log(`  ${chalk.cyan(s.id.padEnd(12))} ${s.name}`);
+        console.log(`  ${" ".repeat(12)} ${chalk.dim(s.description)}\n`);
+      }
+      console.log(`Use: ${chalk.yellow("ctx init --starter <recipe>")}\n`);
+      return;
+    }
+
     const storage = getStorage();
     await storage.init(opts.name, opts.layout as LayoutMode);
-    console.log(chalk.green(`Initialized ${opts.layout} vault: ${getVaultRoot()}`));
+
+    // Apply starter if specified
+    if (opts.starter) {
+      const starter = getStarter(opts.starter);
+      if (!starter) {
+        console.log(chalk.red(`Unknown starter: ${opts.starter}`));
+        console.log(`Available: ${listStarters().map((s) => s.id).join(", ")}`);
+        process.exit(1);
+      }
+
+      // Write starter nodes
+      for (const node of starter.nodes) {
+        await storage.writeDocument(node.path, node.content);
+      }
+
+      // Write starter packs
+      for (const pack of starter.packs) {
+        const packPath = pathMod.join(getVaultRoot(), "packs", `${pack.id}.yml`);
+        await fs.promises.mkdir(pathMod.dirname(packPath), { recursive: true });
+        await fs.promises.writeFile(packPath, pack.content, "utf-8");
+      }
+
+      // Publish all starter nodes
+      for (const node of starter.nodes) {
+        await publishDocument(storage, node.path, {
+          editedBy: "cli@contextnest.local",
+          note: `Created by ${starter.id} starter`,
+        });
+      }
+
+      await regenerateIndex(storage);
+
+      // Print results
+      console.log(chalk.green(`\n  Initialized ${opts.layout} vault: ${getVaultRoot()}`));
+      console.log(chalk.green(`  Applied starter: ${chalk.bold(starter.name)}\n`));
+      console.log(`  Created ${starter.nodes.length} documents:`);
+      for (const node of starter.nodes) {
+        console.log(`    ${chalk.cyan(node.path + ".md")}`);
+      }
+      console.log(`  Created ${starter.packs.length} pack(s):`);
+      for (const pack of starter.packs) {
+        console.log(`    ${chalk.cyan("packs/" + pack.id + ".yml")}`);
+      }
+
+      // Post-init prompt for Claude
+      const prompt = starter.getPrompt();
+      console.log(`\n${chalk.dim("─".repeat(60))}`);
+      console.log(chalk.dim(prompt.context));
+      console.log(`${chalk.dim("─".repeat(60))}`);
+      console.log(prompt.instructions);
+      console.log(chalk.dim("─".repeat(60)));
+
+      console.log(`\n  ${chalk.dim("Context Nest by PromptOwl — https://promptowl.com")}\n`);
+    } else {
+      console.log(chalk.green(`\n  Initialized ${opts.layout} vault: ${getVaultRoot()}\n`));
+      console.log(chalk.bold("  Choose a starter recipe to populate your vault:\n"));
+      for (const s of listStarters()) {
+        console.log(`    ${chalk.cyan(s.id.padEnd(12))} ${s.name}`);
+        console.log(`    ${" ".repeat(12)} ${chalk.dim(s.description)}\n`);
+      }
+      console.log(`  Apply one with: ${chalk.yellow("ctx init --starter <recipe>")}`);
+      console.log(`  Or add documents manually: ${chalk.yellow("ctx add nodes/my-doc --title \"My Document\"")}\n`);
+
+      // Post-init instructions for AI assistants
+      console.log(chalk.dim("─".repeat(60)));
+      console.log(`[CONTEXT NEST VAULT INITIALIZED — EMPTY VAULT]
+
+This vault was initialized without a starter recipe. To help the user get started:
+1. Ask what this vault is for (engineering, strategy, research, team knowledge, etc.)
+2. Recommend a starter recipe based on their answer:
+   - developer  — Software engineering teams
+   - executive  — Strategic leadership
+   - analyst    — Research, OSINT, investigations
+   - team       — General team knowledge base
+3. Run: ctx init --starter <recipe> (in the vault directory)
+   Note: re-running init with --starter will add the starter content to the existing vault.
+4. After the starter is applied, generate a CLAUDE.md tailored to the user's needs.`);
+      console.log(chalk.dim("─".repeat(60)));
+      console.log(`\n  ${chalk.dim("Context Nest by PromptOwl — https://promptowl.com")}\n`);
+    }
   });
 
 // ─── ctx add ───────────────────────────────────────────────────────────────────
@@ -429,6 +522,76 @@ program
     }
   });
 
+// ─── Cloud inject helper ──────────────────────────────────────────────────────
+
+async function injectFromCloud(selector: string, opts: { json?: boolean }): Promise<void> {
+  // Parse @org/pack-name format
+  const match = selector.match(/^@([^/]+)\/(.+)$/);
+  if (!match) {
+    console.log(chalk.red(`Invalid cloud pack format: ${selector}`));
+    console.log(`Expected: @org/pack-name (e.g. @promptowl/executive-ai-strategy)`);
+    process.exit(1);
+  }
+
+  const [, org, packName] = match;
+  const apiUrl = process.env.PROMPTOWL_API_URL || "https://api.promptowl.com";
+  const token = await loadCloudToken();
+
+  console.log(chalk.dim(`  ☁ Fetching from PromptOwl cloud...`));
+
+  const res = await fetch(`${apiUrl}/v1/packs/${org}/${packName}/inject`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ selector: `pack:${packName}`, format: "markdown" }),
+  });
+
+  if (res.status === 429) {
+    const body = await res.json() as { message?: string; upgrade_url?: string };
+    console.log(chalk.red(`\n  ${body.message || "Injection quota exceeded"}`));
+    if (body.upgrade_url) {
+      console.log(chalk.yellow(`  Upgrade: ${body.upgrade_url}`));
+    }
+    process.exit(1);
+  }
+
+  if (!res.ok) {
+    const body = await res.text();
+    console.log(chalk.red(`Cloud injection failed (${res.status}): ${body}`));
+    process.exit(1);
+  }
+
+  const result = await res.json() as {
+    documents: Array<{ id: string; title: string; body: string; type: string; version: number }>;
+    metering: { credits_used: number; remaining_today: number; plan: string };
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(chalk.bold("\nDocuments:"));
+    for (const doc of result.documents) {
+      console.log(`  ${chalk.cyan(doc.id)}: ${doc.title}`);
+    }
+    console.log(
+      chalk.dim(`\n  ${result.metering.credits_used} credit(s) used, ${result.metering.remaining_today} remaining today (${result.metering.plan} plan)`),
+    );
+  }
+}
+
+async function loadCloudToken(): Promise<string | null> {
+  const homedir = (await import("node:os")).homedir();
+  const credPath = pathMod.join(homedir, ".promptowl", "credentials.json");
+  try {
+    const creds = JSON.parse(await fs.promises.readFile(credPath, "utf-8"));
+    return creds.access_token || null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── ctx inject ────────────────────────────────────────────────────────────────
 
 program
@@ -436,6 +599,13 @@ program
   .description("Resolve and return context for injection into an AI agent")
   .option("--json", "Output as JSON")
   .action(async (selector, opts) => {
+    // Cloud pack: @org/pack-name routes to PromptOwl API
+    if (selector.startsWith("@")) {
+      await injectFromCloud(selector, opts);
+      return;
+    }
+
+    // Local inject — free forever
     const storage = getStorage();
     const docs = await storage.discoverDocuments();
     const packs = await storage.readPacks();
