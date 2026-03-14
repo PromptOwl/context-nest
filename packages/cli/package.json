@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist",
+    "postinstall": "echo \"\n  Context Nest CLI installed successfully.\n\n  Get started:\n    ctx init --starter developer    # Engineering vault\n    ctx init --starter executive    # Strategy vault\n    ctx init --starter analyst      # Research / OSINT vault\n    ctx init --starter team         # Team knowledge base\n    ctx init --list-starters        # See all options\n\n  Or just run: ctx init\n\n  Docs: https://github.com/PromptOwl/context-nest\n  Context Nest by PromptOwl — https://promptowl.com\n\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -148,9 +148,31 @@ program
 
       console.log(`\n  ${chalk.dim("Context Nest by PromptOwl — https://promptowl.com")}\n`);
     } else {
-      console.log(chalk.green(`Initialized ${opts.layout} vault: ${getVaultRoot()}`));
-      console.log(`\n  ${chalk.dim("Tip: Use --starter for a guided setup: ctx init --starter developer")}`);
-      console.log(`  ${chalk.dim("Context Nest by PromptOwl — https://promptowl.com")}\n`);
+      console.log(chalk.green(`\n  Initialized ${opts.layout} vault: ${getVaultRoot()}\n`));
+      console.log(chalk.bold("  Choose a starter recipe to populate your vault:\n"));
+      for (const s of listStarters()) {
+        console.log(`    ${chalk.cyan(s.id.padEnd(12))} ${s.name}`);
+        console.log(`    ${" ".repeat(12)} ${chalk.dim(s.description)}\n`);
+      }
+      console.log(`  Apply one with: ${chalk.yellow("ctx init --starter <recipe>")}`);
+      console.log(`  Or add documents manually: ${chalk.yellow("ctx add nodes/my-doc --title \"My Document\"")}\n`);
+
+      // Post-init instructions for AI assistants
+      console.log(chalk.dim("─".repeat(60)));
+      console.log(`[CONTEXT NEST VAULT INITIALIZED — EMPTY VAULT]
+
+This vault was initialized without a starter recipe. To help the user get started:
+1. Ask what this vault is for (engineering, strategy, research, team knowledge, etc.)
+2. Recommend a starter recipe based on their answer:
+   - developer  — Software engineering teams
+   - executive  — Strategic leadership
+   - analyst    — Research, OSINT, investigations
+   - team       — General team knowledge base
+3. Run: ctx init --starter <recipe> (in the vault directory)
+   Note: re-running init with --starter will add the starter content to the existing vault.
+4. After the starter is applied, generate a CLAUDE.md tailored to the user's needs.`);
+      console.log(chalk.dim("─".repeat(60)));
+      console.log(`\n  ${chalk.dim("Context Nest by PromptOwl — https://promptowl.com")}\n`);
     }
   });
 
